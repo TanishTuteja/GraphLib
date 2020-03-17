@@ -1,14 +1,18 @@
 var graph;
+graph = new Graph(0.1, 1);
 
 function displayLineGraph() {
-  graph = new Graph(0.1, 1);
-
   for (let i = 0; i < 100; i++) {
-    addRandomPoint();
+    sleep(0).then(() => {
+      addRandomPoint();
+    });
   }
 }
 
 function addRandomPoint() {
   graph.addData(Math.random() * 100, Math.random() * 400);
-  graph.update();
+}
+
+function sleep(time) {
+  return new Promise(resolve => setTimeout(resolve, time));
 }
