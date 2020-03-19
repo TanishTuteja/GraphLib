@@ -1,5 +1,5 @@
 var graph;
-graph = new Graph(0.1, 1);
+graph = new LineGraph(10, 10);
 
 function displayLineGraph() {
   for (let i = 0; i < 100; i++) {
@@ -10,7 +10,7 @@ function displayLineGraph() {
 }
 
 function addRandomPoint() {
-  graph.addData(Math.random() * 100, Math.random() * 400);
+  graph.addData(Math.random() * 100, Math.random() * 100);
 }
 
 function sleep(time) {
