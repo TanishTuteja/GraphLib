@@ -91,7 +91,7 @@ class LineGraph {
     this.drawStuff();
   }
 
-  addData(xData, yData) {
+  addData(xData, yData, optimizedUpdate) {
     let position = 0;
 
     while (position < this.data.length && this.data[position].x < xData) {
@@ -111,57 +111,59 @@ class LineGraph {
 
     this.data[position] = currentData;
 
-    this.ctx.fillStyle = this.colorBG;
+    if (optimizedUpdate) {
+      this.ctx.fillStyle = this.colorBG;
 
-    if (insertedPosition != 0 && insertedPosition != this.data.length - 1) {
-      let prevX = this.data[insertedPosition - 1].x;
-      let nextX = this.data[insertedPosition + 1].x;
+      if (insertedPosition != 0 && insertedPosition != this.data.length - 1) {
+        let prevX = this.data[insertedPosition - 1].x;
+        let nextX = this.data[insertedPosition + 1].x;
 
-      let w = (nextX - prevX) * this.xPixelScale;
+        let w = (nextX - prevX) * this.xPixelScale;
 
-      this.ctx.fillRect(
-        this.getXPixel(prevX),
-        this.margin,
-        w,
-        this.height - 2 * this.margin
-      );
-    }
+        this.ctx.fillRect(
+          this.getXPixel(prevX),
+          this.margin,
+          w,
+          this.height - 2 * this.margin
+        );
+      }
 
-    this.drawGridLines();
-
-    this.ctx.strokeStyle = this.colorLines;
-
-    let currentPixelX = this.getXPixel(xData);
-    let currentPixelY = this.getYPixel(yData);
-
-    if (insertedPosition != 0) {
-      let prevData = this.data[insertedPosition - 1];
-
-      let pixelX = this.getXPixel(prevData.x);
-      let pixelY = this.getYPixel(prevData.y);
+      this.drawGridLines();
 
       this.ctx.strokeStyle = this.colorLines;
-      this.drawLine(pixelX, pixelY, currentPixelX, currentPixelY);
+
+      let currentPixelX = this.getXPixel(xData);
+      let currentPixelY = this.getYPixel(yData);
+
+      if (insertedPosition != 0) {
+        let prevData = this.data[insertedPosition - 1];
+
+        let pixelX = this.getXPixel(prevData.x);
+        let pixelY = this.getYPixel(prevData.y);
+
+        this.ctx.strokeStyle = this.colorLines;
+        this.drawLine(pixelX, pixelY, currentPixelX, currentPixelY);
+
+        this.ctx.fillStyle = this.colorPoints;
+        this.fillPoint(pixelX, pixelY);
+      }
+
+      if (insertedPosition != this.data.length - 1) {
+        let nextData = this.data[insertedPosition + 1];
+
+        let pixelX = this.getXPixel(nextData.x);
+        let pixelY = this.getYPixel(nextData.y);
+
+        this.ctx.strokeStyle = this.colorLines;
+        this.drawLine(currentPixelX, currentPixelY, pixelX, pixelY);
+
+        this.ctx.fillStyle = this.colorPoints;
+        this.fillPoint(pixelX, pixelY);
+      }
 
       this.ctx.fillStyle = this.colorPoints;
-      this.fillPoint(pixelX, pixelY);
+      this.fillPoint(currentPixelX, currentPixelY);
     }
-
-    if (insertedPosition != this.data.length - 1) {
-      let nextData = this.data[insertedPosition + 1];
-
-      let pixelX = this.getXPixel(nextData.x);
-      let pixelY = this.getYPixel(nextData.y);
-
-      this.ctx.strokeStyle = this.colorLines;
-      this.drawLine(currentPixelX, currentPixelY, pixelX, pixelY);
-
-      this.ctx.fillStyle = this.colorPoints;
-      this.fillPoint(pixelX, pixelY);
-    }
-
-    this.ctx.fillStyle = this.colorPoints;
-    this.fillPoint(currentPixelX, currentPixelY);
   }
 
   addDataArray(xData, yData) {
